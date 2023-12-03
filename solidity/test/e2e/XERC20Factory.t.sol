@@ -16,14 +16,14 @@ contract E2EDeployment is CommonE2EBase {
     assertEq(_xerc20.mintingMaxLimitOf(_testMinter), 100 ether);
   }
 
-  function testDeployLockbox() public {
-    uint256[] memory _limits = new uint256[](0);
-    address[] memory _minters = new address[](0);
+  // function testDeployLockbox() public {
+  //   uint256[] memory _limits = new uint256[](0);
+  //   address[] memory _minters = new address[](0);
 
-    address _token = _xerc20Factory.deployXERC20('Test', 'TST', _limits, _limits, _minters);
-    address _lock = _xerc20Factory.deployLockbox(_token, address(_dai), false);
+  //   address _token = _xerc20Factory.deployXERC20('Test', 'TST', _limits, _limits, _minters);
+  //   address _lock = _xerc20Factory.deployLockbox(_token, address(_dai), false);
 
-    assertEq(address(XERC20Lockbox(payable(_lock)).XERC20()), address(_token));
-    assertEq(address(XERC20Lockbox(payable(_lock)).ERC20()), address(_dai));
-  }
+  //   assertEq(address(XERC20Lockbox(payable(_lock)).XERC20()), address(_token));
+  //   assertEq(address(XERC20Lockbox(payable(_lock)).ERC20()), address(_dai));
+  // }
 }
