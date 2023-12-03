@@ -4,13 +4,17 @@ pragma solidity >=0.8.4 <0.9.0;
 import {IXERC20} from '../interfaces/IXERC20.sol';
 import {ERC20} from '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import {ERC20Permit} from '@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol';
-import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
+import {AccessControlDefaultAdminRules} from '@openzeppelin/contracts/access/AccessControlDefaultAdminRules.sol';
 
-contract XERC20 is ERC20, Ownable, IXERC20, ERC20Permit {
+contract XERC20 is ERC20, AccessControlDefaultAdminRules, IXERC20, ERC20Permit {
   /**
    * @notice The duration it takes for the limits to fully replenish
    */
   uint256 private constant _DURATION = 1 days;
+
+  bytes32 public constant SET_LIMITS_ROLE = keccak256("SET_LIMITS_ROLE");
+  bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+  bytes32 public constant UNPAUSER_ROLE = keccak256("UNPAUSER_ROLE");
 
   /**
    * @notice The address of the factory which deployed this contract
@@ -32,16 +36,17 @@ contract XERC20 is ERC20, Ownable, IXERC20, ERC20Permit {
    *
    * @param _name The name of the token
    * @param _symbol The symbol of the token
-   * @param _factory The factory which deployed this contract
+   * @param _initialDefaultAdmin The initial default (and only) admin for this contract
    */
 
   constructor(
     string memory _name,
     string memory _symbol,
-    address _factory
-  ) ERC20(_name, _symbol) ERC20Permit(_name) {
-    _transferOwnership(_factory);
-    FACTORY = _factory;
+    address _initialDefaultAdmin
+  ) ERC20(_name, _symbol) ERC20Permit(_name) AccessControlDefaultAdminRules(0, _initialDefaultAdmin) {
+    FACTORY = msg.sender;
+    grantRole(SET_LIMITS_ROLE, FACTORY);
+    grantRole(SET_LIMITS_ROLE, _initialDefaultAdmin);
   }
 
   /**
@@ -90,7 +95,7 @@ contract XERC20 is ERC20, Ownable, IXERC20, ERC20Permit {
    * @param _burningLimit The updated burning limit we are setting to the bridge
    * @param _bridge The address of the bridge we are setting the limits too
    */
-  function setLimits(address _bridge, uint256 _mintingLimit, uint256 _burningLimit) external onlyOwner {
+  function setLimits(address _bridge, uint256 _mintingLimit, uint256 _burningLimit) external onlyRole(SET_LIMITS_ROLE) {
     _changeMinterLimit(_bridge, _mintingLimit);
     _changeBurnerLimit(_bridge, _burningLimit);
     emit BridgeLimitsSet(_mintingLimit, _burningLimit, _bridge);

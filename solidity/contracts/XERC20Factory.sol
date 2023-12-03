@@ -102,8 +102,13 @@ contract XERC20Factory is IXERC20Factory {
     for (uint256 _i; _i < _bridgesLength; ++_i) {
       XERC20(_xerc20).setLimits(_bridges[_i], _minterLimits[_i], _burnerLimits[_i]);
     }
+    XERC20(_xerc20).renounceRole(XERC20(_xerc20).SET_LIMITS_ROLE(), address(this));
 
-    XERC20(_xerc20).transferOwnership(msg.sender);
+    // XERC20(_xerc20).grantRole(PAUSER_ROLE, msg.sender);
+    // XERC20(_xerc20).grantRole(UNPAUSER_ROLE, msg.sender);
+
+    // XERC20(_xerc20).transferOwnership(msg.sender);
+    XERC20(_xerc20).grantRole(XERC20(_xerc20).SET_LIMITS_ROLE(), msg.sender);
   }
 
   function _deployLockbox(
