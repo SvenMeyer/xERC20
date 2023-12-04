@@ -1,0 +1,176 @@
+No files changed, compilation skipped
+
+Running 2 tests for solidity/test/unit/XERC20.t.sol:UnitNames
+[32m[PASS][0m testName() (gas: 9599)
+[32m[PASS][0m testSymbol() (gas: 9642)
+Test result: [32mok[0m. [32m2[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 693.58µs
+
+Running 11 tests for solidity/test/unit/XERC20Factory.t.sol:UnitDeploy
+[32m[PASS][0m testCantDeployLockboxTwice() (gas: 2768100)
+[32m[PASS][0m testComputedAddress() (gas: 1903054)
+[32m[PASS][0m testDeployEmitsEvent() (gas: 1904037)
+[32m[PASS][0m testDeployment() (gas: 1898956)
+[32m[PASS][0m testLockboxDeploymentRevertsIfMaliciousAddress() (gas: 10729)
+[32m[PASS][0m testLockboxEmitsEvent() (gas: 2771794)
+[32m[PASS][0m testLockboxPrecomputedAddress() (gas: 2770402)
+[32m[PASS][0m testLockboxSingleDeployment() (gas: 2770058)
+[32m[PASS][0m testLockboxSingleDeploymentRevertsIfNotOwner() (gas: 1905629)
+[32m[PASS][0m testNotParallelArraysRevert() (gas: 19134)
+[32m[PASS][0m testRevertsWhenAddressIsTaken() (gas: 8937393460516789213)
+Test result: [32mok[0m. [32m11[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 8.23ms
+
+Running 6 tests for solidity/test/unit/XERC20.t.sol:UnitMintBurn
+[32m[PASS][0m testBurn(uint256) (runs: 256, μ: 186717, ~: 171260)
+[32m[PASS][0m testBurnReducesAllowance(uint256,uint256) (runs: 256, μ: 216848, ~: 228720)
+[32m[PASS][0m testBurnRevertsWhenLimitIsTooLow(uint256,uint256) (runs: 256, μ: 163831, ~: 156916)
+[32m[PASS][0m testBurnRevertsWithoutApproval(uint256) (runs: 256, μ: 191900, ~: 207503)
+[32m[PASS][0m testMint(uint256) (runs: 256, μ: 162932, ~: 171406)
+[32m[PASS][0m testMintRevertsIfNotApprove(uint256) (runs: 256, μ: 22305, ~: 22305)
+Test result: [32mok[0m. [32m6[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 55.15ms
+
+Running 10 tests for solidity/test/unit/XERC20Lockbox.t.sol:UnitDeposit
+[32m[PASS][0m testDeposit(uint256) (runs: 256, μ: 23966, ~: 23966)
+[32m[PASS][0m testDepositEmitsEvent(uint256) (runs: 256, μ: 23275, ~: 23275)
+[32m[PASS][0m testDepositTo(uint256) (runs: 256, μ: 26199, ~: 26199)
+[32m[PASS][0m testNativeDeposit(uint256) (runs: 256, μ: 24416, ~: 24416)
+[32m[PASS][0m testNativeDepositTo(uint256) (runs: 256, μ: 26720, ~: 26720)
+[32m[PASS][0m testNativeRevertsIfDepositIntoNonNative(uint256) (runs: 256, μ: 11710, ~: 11710)
+[32m[PASS][0m testNativeRevertsIfDepositToIntoNonNative(uint256) (runs: 256, μ: 13943, ~: 13943)
+[32m[PASS][0m testNonNativeIntoNativeDepositReverts(uint256) (runs: 256, μ: 18307, ~: 18307)
+[32m[PASS][0m testNonNativeIntoNativeDeposittoReverts(uint256) (runs: 256, μ: 20553, ~: 20553)
+[32m[PASS][0m testSendingNativeDepositByTransfer(uint256) (runs: 256, μ: 24228, ~: 24228)
+Test result: [32mok[0m. [32m10[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 79.91ms
+
+Running 4 tests for solidity/test/unit/XERC20Lockbox.t.sol:UnitWithdraw
+[32m[PASS][0m testNativeWithdraw(uint256) (runs: 256, μ: 33138, ~: 33138)
+[32m[PASS][0m testNativeWithdrawTo(uint256) (runs: 256, μ: 62874, ~: 62874)
+[32m[PASS][0m testWithdraw(uint256) (runs: 256, μ: 23280, ~: 23280)
+[32m[PASS][0m testWithdrawEmitsEvent(uint256) (runs: 256, μ: 22844, ~: 22844)
+Test result: [32mok[0m. [32m4[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 90.43ms
+
+Running 18 tests for solidity/test/unit/XERC20.t.sol:UnitCreateParams
+[32m[PASS][0m testAddingMintersAndLimits(uint256,uint256,uint256,address,address,address) (runs: 256, μ: 530349, ~: 528173)
+[32m[PASS][0m testChangeLimit(uint256,address) (runs: 256, μ: 179780, ~: 196727)
+[32m[PASS][0m testChangingUsedLimitsToZero(uint256,uint256) (runs: 256, μ: 200842, ~: 213638)
+[32m[PASS][0m testCurrentLimitIsMaxLimitIfOver24Hours(uint256,address) (runs: 256, μ: 185327, ~: 200378)
+[32m[PASS][0m testCurrentLimitIsMaxLimitIfUnused(uint256,address) (runs: 256, μ: 178804, ~: 197927)
+[32m[PASS][0m testLimitVestsLinearly(uint256,address) (runs: 256, μ: 202043, ~: 202039)
+[32m[PASS][0m testLockboxDoesntNeedMinterRights(address) (runs: 256, μ: 66422, ~: 66408)
+[32m[PASS][0m testOverflowLimitMakesItMax(uint256,address,uint256) (runs: 256, μ: 221496, ~: 221752)
+[32m[PASS][0m testRemoveBridge(uint256) (runs: 256, μ: 146342, ~: 146330)
+[32m[PASS][0m testRevertsWithWrongCaller() (gas: 12828)
+[32m[PASS][0m testSetLockbox(address) (runs: 256, μ: 34923, ~: 35001)
+[32m[PASS][0m testSetLockboxEmitsEvents(address) (runs: 256, μ: 35210, ~: 35366)
+[32m[PASS][0m testSettingLimitsToUnapprovedUser(uint256) (runs: 256, μ: 183345, ~: 198892)
+[32m[PASS][0m testUseLimitsUpdatesLimit(uint256,address) (runs: 256, μ: 202822, ~: 202816)
+[32m[PASS][0m testchangeBridgeBurningLimitEmitsEvent(uint256,address) (runs: 256, μ: 126942, ~: 136115)
+[32m[PASS][0m testchangeBridgeMintingLimitDecreaseCurrentLimitByTheDifferenceItWasChanged(uint256,address,uint256) (runs: 256, μ: 231859, ~: 232032)
+[32m[PASS][0m testchangeBridgeMintingLimitEmitsEvent(uint256,address) (runs: 256, μ: 125252, ~: 136058)
+[32m[PASS][0m testchangeBridgeMintingLimitIncreaseCurrentLimitByTheDifferenceItWasChanged(uint256,address,uint256) (runs: 256, μ: 223758, ~: 224127)
+Test result: [32mok[0m. [32m18[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 99.85ms
+
+Running 2 tests for solidity/test/e2e/XERC20Factory.t.sol:E2EDeployment
+[32m[PASS][0m testDeploy() (gas: 39424)
+[32m[PASS][0m testDeployLockbox() (gas: 2730363)
+Test result: [32mok[0m. [32m2[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 2.11s
+
+Running 4 tests for solidity/test/e2e/XERC20Lockbox.sol:E2ELockbox
+[32m[PASS][0m testDeposit() (gas: 237706)
+[32m[PASS][0m testDepositTo() (gas: 239512)
+[32m[PASS][0m testLockbox() (gas: 10647)
+[32m[PASS][0m testWithdraw() (gas: 284983)
+Test result: [32mok[0m. [32m4[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 2.11s
+
+Running 2 tests for solidity/test/e2e/XERC20.t.sol:E2EMintAndBurn
+[32m[PASS][0m testBurn() (gas: 222640)
+[32m[PASS][0m testMint() (gas: 168790)
+Test result: [32mok[0m. [32m2[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 2.11s
+
+Running 14 tests for solidity/test/e2e/XERC20.t.sol:E2EParameterMath
+[32m[PASS][0m testAddingMintersAndLimits() (gas: 564958)
+[32m[PASS][0m testChangeLimit() (gas: 196518)
+[32m[PASS][0m testChangingMaxLimitUpdatesCurrentLimit() (gas: 204869)
+[32m[PASS][0m testChangingMaxLimitWhenLimitIsUsedUpdatesCurrentLimit() (gas: 231584)
+[32m[PASS][0m testChangingPartialMaxLimitUpdatesCurrentLimitWhenUsed() (gas: 255101)
+[32m[PASS][0m testChangingPartialMaxLimitUpdatesCurrentLimitWithIncrease() (gas: 255012)
+[32m[PASS][0m testCurrentLimitIsMaxAfterDuration() (gas: 224582)
+[32m[PASS][0m testCurrentLimitIsSameIfUnused() (gas: 197759)
+[32m[PASS][0m testCurrentLimitIsUpdatedWithTime() (gas: 228878)
+[32m[PASS][0m testMultipleBridgesBurnsHaveDifferentValues() (gas: 542133)
+[32m[PASS][0m testMultipleBridgesHaveDifferentValue() (gas: 482338)
+[32m[PASS][0m testMultipleMintsAndBurns() (gas: 544056)
+[32m[PASS][0m testMultipleUsersUseBridge() (gas: 366332)
+[32m[PASS][0m testUseLimitsUpdatesLimit() (gas: 224843)
+Test result: [32mok[0m. [32m14[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 2.11s
+| Dai contract    |                 |     |        |     |         |
+|-----------------|-----------------|-----|--------|-----|---------|
+| Deployment Cost | Deployment Size |     |        |     |         |
+| 0               | 0               |     |        |     |         |
+| Function Name   | min             | avg | median | max | # calls |
+| name            | 629             | 629 | 629    | 629 | 1       |
+| symbol          | 672             | 672 | 672    | 672 | 1       |
+
+
+| solidity/contracts/XERC20.sol:XERC20 contract |                 |        |        |        |         |
+|-----------------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                               | Deployment Size |        |        |        |         |
+| 1699775                                       | 9818            |        |        |        |         |
+| Function Name                                 | min             | avg    | median | max    | # calls |
+| FACTORY                                       | 306             | 306    | 306    | 306    | 1       |
+| allowance                                     | 814             | 814    | 814    | 814    | 1       |
+| approve                                       | 2674            | 23516  | 24674  | 24674  | 19      |
+| balanceOf                                     | 651             | 851    | 651    | 2651   | 10      |
+| burn                                          | 1351            | 5631   | 6067   | 8567   | 29      |
+| burningCurrentLimitOf                         | 1057            | 1408   | 1549   | 1549   | 23      |
+| burningMaxLimitOf                             | 654             | 807    | 654    | 2654   | 13      |
+| lockbox                                       | 426             | 426    | 426    | 426    | 1       |
+| mint                                          | 10899           | 38296  | 40560  | 50699  | 38      |
+| mintingCurrentLimitOf                         | 1029            | 1378   | 1521   | 1521   | 26      |
+| mintingMaxLimitOf                             | 634             | 759    | 634    | 2634   | 16      |
+| name                                          | 1261            | 2594   | 3261   | 3261   | 3       |
+| owner                                         | 376             | 442    | 376    | 2376   | 30      |
+| setLimits                                     | 2653            | 153709 | 181286 | 183286 | 72      |
+| setLockbox                                    | 23594           | 23594  | 23594  | 23594  | 30      |
+| symbol                                        | 3281            | 3281   | 3281   | 3281   | 2       |
+| totalSupply                                   | 338             | 338    | 338    | 338    | 1       |
+| transferOwnership                             | 2431            | 2431   | 2431   | 2431   | 32      |
+
+
+| solidity/contracts/XERC20Factory.sol:XERC20Factory contract |                 |         |         |         |         |
+|-------------------------------------------------------------|-----------------|---------|---------|---------|---------|
+| Deployment Cost                                             | Deployment Size |         |         |         |         |
+| 3498717                                                     | 17506           |         |         |         |         |
+| Function Name                                               | min             | avg     | median  | max     | # calls |
+| deployLockbox                                               | 847382          | 863738  | 864482  | 864482  | 23      |
+| deployXERC20                                                | 1872961         | 2063579 | 2072244 | 2072244 | 23      |
+
+
+| solidity/contracts/XERC20Lockbox.sol:XERC20Lockbox contract |                 |       |        |       |         |
+|-------------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                             | Deployment Size |       |        |       |         |
+| 663331                                                      | 3703            |       |        |       |         |
+| Function Name                                               | min             | avg   | median | max   | # calls |
+| ERC20                                                       | 226             | 226   | 226    | 226   | 4       |
+| XERC20                                                      | 227             | 227   | 227    | 227   | 4       |
+| deposit                                                     | 321             | 27594 | 3544   | 65282 | 5       |
+| depositNative                                               | 216             | 1510  | 1942   | 1942  | 4       |
+| depositNativeTo                                             | 385             | 1249  | 1249   | 2114  | 2       |
+| depositTo                                                   | 432             | 23147 | 3647   | 65364 | 3       |
+| receive                                                     | 1857            | 1857  | 1857   | 1857  | 1       |
+| withdraw                                                    | 3410            | 10442 | 6167   | 26024 | 4       |
+| withdrawTo                                                  | 36495           | 36495 | 36495  | 36495 | 1       |
+
+
+| solidity/test/unit/XERC20Factory.t.sol:XERC20FactoryForTest contract |                 |                    |         |                     |         |
+|----------------------------------------------------------------------|-----------------|--------------------|---------|---------------------|---------|
+| Deployment Cost                                                      | Deployment Size |                    |         |                     |         |
+| 3511733                                                              | 17571           |                    |         |                     |         |
+| Function Name                                                        | min             | avg                | median  | max                 | # calls |
+| deployLockbox                                                        | 517             | 494459             | 864466  | 864466              | 7       |
+| deployXERC20                                                         | 2541            | 744782788377658490 | 1890045 | 8937393460514886382 | 12      |
+| getDeployed                                                          | 846             | 846                | 846     | 846                 | 4       |
+
+
+
+ 
+Ran 10 test suites: [32m73[0m tests passed, [31m0[0m failed, [33m0[0m skipped (73 total tests)
