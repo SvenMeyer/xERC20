@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.4 <0.9.0;
 
+import "forge-std/console.sol";
+
 import {XERC20} from '../contracts/XERC20.sol';
 import {IXERC20Factory} from '../interfaces/IXERC20Factory.sol';
 import {XERC20Lockbox} from '../contracts/XERC20Lockbox.sol';
@@ -95,7 +97,20 @@ contract XERC20Factory is IXERC20Factory {
     bytes memory _creation = type(XERC20).creationCode;
     bytes memory _bytecode = abi.encodePacked(_creation, abi.encode(_name, _symbol, address(this)));
 
-    _xerc20 = CREATE3.deploy(_salt, _bytecode, 0);
+    console.log("_creation.length =", _creation.length);
+    console.log("_bytecode.length =", _bytecode.length);
+    
+    console.log("msg.sender =", msg.sender);
+    console.log("factory : address(this)", address(this));
+    console.log("CREATE3 address =", address(CREATE3));
+    console.log("_salt =");
+    console.logBytes32(_salt);
+ 
+    console.log("before : _xerc20 = CREATE3.deploy(_salt, _bytecode, 0);");
+
+    _xerc20 = CREATE3.deploy(_salt, _bytecode, 0); // TODO <<<<< HERS IS A PROBLEM <<<<<<<<<<<<<<<<<< ????
+
+    console.log("DEPLOYED");
 
     EnumerableSet.add(_xerc20RegistryArray, _xerc20);
 

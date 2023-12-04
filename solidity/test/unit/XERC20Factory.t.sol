@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.4 <0.9.0;
 
+import "forge-std/console.sol";
+
 import {DSTestFull} from '../../test/utils/DSTestFull.sol';
 import {XERC20} from '../../contracts/XERC20.sol';
 import {XERC20Factory} from '../../contracts/XERC20Factory.sol';
@@ -26,10 +28,13 @@ abstract contract Base is DSTestFull {
 
   function setUp() public virtual {
     _xerc20Factory = new XERC20FactoryForTest();
+    console.log("_xerc20Factory = new XERC20FactoryForTest();");
+    console.logAddress(address(_xerc20Factory));
   }
 }
 
 contract UnitDeploy is Base {
+
   function testDeployment() public {
     uint256[] memory _limits = new uint256[](0);
     address[] memory _minters = new address[](0);
