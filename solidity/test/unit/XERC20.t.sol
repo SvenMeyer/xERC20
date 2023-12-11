@@ -33,6 +33,47 @@ contract UnitNames is Base {
   }
 }
 
+contract UnitCap is Base {
+  function testSetCapRevertsIfZero() public {
+    vm.prank(_owner);
+    vm.expectRevert(abi.encodeWithSelector(IXERC20.ERC20InvalidCap.selector, 0));
+    _xerc20.setCap(0);
+  }
+
+  function testSetCapRevertsIfAlreadySet() public {
+    // vm.assume(_amount > 0);
+    uint256 _amount = 111_111_111 * 10 ** 18;
+    vm.startPrank(_owner);
+    _xerc20.setCap(_amount);
+    vm.expectRevert(IXERC20.ERC20CapAlreadySet.selector);
+    _xerc20.setCap(_amount);
+    vm.stopPrank();
+  }
+
+  function testMintMax(uint256 _amount) public {
+    // _amount = bound(_amount, 1, _xerc20.cap());
+    _amount = _xerc20.cap();
+    vm.prank(_owner);
+    _xerc20.setLimits(_user, _amount, 0);
+    vm.prank(_user);
+    _xerc20.mint(_minter, _amount);
+    assertEq(_xerc20.balanceOf(_minter), _amount);
+  }
+
+  function testMintRevertsIfCapExceeded(uint256 _amount) public {
+    uint256 _maxSupply = 111_111_111 * 10 ** 18;
+    vm.prank(_owner);
+    _xerc20.setCap(_maxSupply);
+    vm.prank(_owner);
+    _xerc20.setLimits(_user, UINT256_MAX, 0); // no upper limit enforced by bridge
+
+    vm.assume(_amount > _maxSupply);
+    vm.prank(_user);
+    vm.expectRevert(abi.encodeWithSelector(IXERC20.ERC20ExceededCap.selector, _amount, _maxSupply));
+    _xerc20.mint(_user, _amount);
+  }
+}
+
 contract UnitMintBurn is Base {
   function testMintRevertsIfNotApprove(uint256 _amount) public {
     vm.assume(_amount > 0);
