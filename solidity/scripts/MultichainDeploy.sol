@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.4 <0.9.0;
 
-// solhint-disable-next-line no-console
-import {console} from 'forge-std/console.sol';
 import {Test} from 'forge-std/Test.sol';
 import {XERC20Factory, IXERC20Factory} from '../contracts/XERC20Factory.sol';
 import {Script} from 'forge-std/Script.sol';
@@ -27,10 +25,8 @@ contract MultichainDeploy is Script, ScriptingLibrary {
       address _deployedFactory = getAddress(_bytecodeFactory, _salt, CREATE2);
       XERC20Factory _fact = new XERC20Factory{salt: _salt}();
       require(address(_fact) == _deployedFactory, 'Factory address does not match');
-      
+
       vm.stopBroadcast();
-      // solhint-disable-next-line no-console
-      console.log(chains[_i], 'factory deployed to:', address(_deployedFactory));
       _factories[_i] = _deployedFactory;
     }
 

@@ -4,17 +4,18 @@ pragma solidity >=0.8.4 <0.9.0;
 import {IXERC20} from '../interfaces/IXERC20.sol';
 import {ERC20} from '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import {ERC20Permit} from '@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol';
-import {AccessControlDefaultAdminRules} from '@openzeppelin/contracts/access/AccessControlDefaultAdminRules.sol';
+import {AccessControl} from '@openzeppelin/contracts/access/AccessControl.sol';
 
-contract XERC20 is ERC20, AccessControlDefaultAdminRules, IXERC20, ERC20Permit {
+contract XERC20 is ERC20, AccessControl, IXERC20, ERC20Permit {
   /**
    * @notice The duration it takes for the limits to fully replenish
    */
   uint256 private constant _DURATION = 1 days;
 
-  bytes32 public constant SET_LIMITS_ROLE = keccak256("SET_LIMITS_ROLE");
-  bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-  bytes32 public constant UNPAUSER_ROLE = keccak256("UNPAUSER_ROLE");
+  // bytes32 public constant DEFAULT_ADMIN_ROLE = 0x00; // TODO : get this from @openzeppelin/contracts/access/AccessControl.sol
+  bytes32 public constant SET_LIMITS_ROLE = keccak256('SET_LIMITS_ROLE');
+  bytes32 public constant PAUSER_ROLE = keccak256('PAUSER_ROLE');
+  bytes32 public constant UNPAUSER_ROLE = keccak256('UNPAUSER_ROLE');
 
   /**
    * @notice The address of the factory which deployed this contract
@@ -36,17 +37,13 @@ contract XERC20 is ERC20, AccessControlDefaultAdminRules, IXERC20, ERC20Permit {
    *
    * @param _name The name of the token
    * @param _symbol The symbol of the token
-   * @param _initialDefaultAdmin The initial default (and only) admin for this contract
+   * @param _factory The factory which deployed this contract, is the owner during setup
    */
 
-  constructor(
-    string memory _name,
-    string memory _symbol,
-    address _initialDefaultAdmin
-  ) ERC20(_name, _symbol) ERC20Permit(_name) AccessControlDefaultAdminRules(0, _initialDefaultAdmin) {
-    FACTORY = msg.sender;
-    grantRole(SET_LIMITS_ROLE, FACTORY);
-    grantRole(SET_LIMITS_ROLE, _initialDefaultAdmin);
+  constructor(string memory _name, string memory _symbol, address _factory) ERC20(_name, _symbol) ERC20Permit(_name) {
+    _grantRole(SET_LIMITS_ROLE, _factory); // _transferOwnership(_factory);
+    _grantRole(DEFAULT_ADMIN_ROLE, _factory); // _transferOwnership(_factory);
+    FACTORY = _factory;
   }
 
   /**

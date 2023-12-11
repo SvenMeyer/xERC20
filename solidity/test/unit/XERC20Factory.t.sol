@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.4 <0.9.0;
 
-import "forge-std/console.sol";
-
 import {DSTestFull} from '../../test/utils/DSTestFull.sol';
 import {XERC20} from '../../contracts/XERC20.sol';
 import {XERC20Factory} from '../../contracts/XERC20Factory.sol';
@@ -28,19 +26,23 @@ abstract contract Base is DSTestFull {
 
   function setUp() public virtual {
     _xerc20Factory = new XERC20FactoryForTest();
-    console.log("_xerc20Factory = new XERC20FactoryForTest();");
-    console.logAddress(address(_xerc20Factory));
   }
 }
 
 contract UnitDeploy is Base {
-
   function testDeployment() public {
     uint256[] memory _limits = new uint256[](0);
     address[] memory _minters = new address[](0);
 
+    vm.prank(_owner);
     address _xerc20 = _xerc20Factory.deployXERC20('Test', 'TST', _limits, _limits, _minters);
+
     assertEq(XERC20(_xerc20).name(), 'Test');
+
+    assertTrue(XERC20(_xerc20).hasRole(XERC20(_xerc20).DEFAULT_ADMIN_ROLE(), _owner));
+    assertTrue(XERC20(_xerc20).hasRole(XERC20(_xerc20).SET_LIMITS_ROLE(), _owner));
+    assertFalse(XERC20(_xerc20).hasRole(XERC20(_xerc20).DEFAULT_ADMIN_ROLE(), address(_xerc20Factory)));
+    assertFalse(XERC20(_xerc20).hasRole(XERC20(_xerc20).SET_LIMITS_ROLE(), address(_xerc20Factory)));
   }
 
   function testRevertsWhenAddressIsTaken() public {
@@ -119,12 +121,14 @@ contract UnitDeploy is Base {
     uint256[] memory _limits = new uint256[](0);
     address[] memory _minters = new address[](0);
 
+    vm.startPrank(_owner);
     address _xerc20 = _xerc20Factory.deployXERC20('Test', 'TST', _limits, _limits, _minters);
 
     _xerc20Factory.deployLockbox(_xerc20, _erc20, false);
 
     vm.expectRevert(IXERC20Factory.IXERC20Factory_LockboxAlreadyDeployed.selector);
     _xerc20Factory.deployLockbox(_xerc20, _erc20, false);
+    vm.stopPrank();
   }
 
   function testNotParallelArraysRevert() public {

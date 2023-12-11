@@ -5,8 +5,14 @@ import {CommonE2EBase} from './Common.sol';
 import {XERC20Lockbox} from '../../contracts/XERC20Lockbox.sol';
 
 contract E2EDeployment is CommonE2EBase {
+  bytes32 public constant DEFAULT_ADMIN_ROLE = 0x00; // TODO : get this from @openzeppelin/contracts/access/AccessControl.sol
+  bytes32 public constant SET_LIMITS_ROLE = keccak256('SET_LIMITS_ROLE');
+
   function testDeploy() public {
-    assertEq(address(_xerc20.owner()), _owner);
+    // assertEq(address(_xerc20.owner()), _owner);
+    assertTrue(_xerc20.hasRole(SET_LIMITS_ROLE, _owner));
+    assertTrue(_xerc20.hasRole(DEFAULT_ADMIN_ROLE, _owner));
+
     assertEq(_xerc20.name(), 'Dai Stablecoin');
     assertEq(_xerc20.symbol(), 'DAI');
     assertEq(_xerc20.FACTORY(), address(_xerc20Factory));

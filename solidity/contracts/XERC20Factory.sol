@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.4 <0.9.0;
 
-import "forge-std/console.sol";
-
 import {XERC20} from '../contracts/XERC20.sol';
 import {IXERC20Factory} from '../interfaces/IXERC20Factory.sol';
 import {XERC20Lockbox} from '../contracts/XERC20Lockbox.sol';
@@ -64,7 +62,9 @@ contract XERC20Factory is IXERC20Factory {
   ) external returns (address payable _lockbox) {
     if (_baseToken == address(0) && !_isNative) revert IXERC20Factory_BadTokenAddress();
 
-    if (XERC20(_xerc20).owner() != msg.sender) revert IXERC20Factory_NotOwner();
+    // if (XERC20(_xerc20).owner() != msg.sender) revert IXERC20Factory_NotOwner();
+    // TODO : is there a better way to get DEFAULT_ADMIN_ROLE ?
+    if (!XERC20(_xerc20).hasRole(XERC20(_xerc20).DEFAULT_ADMIN_ROLE(), msg.sender)) revert IXERC20Factory_NotOwner();
     if (_lockboxRegistry[_xerc20] != address(0)) revert IXERC20Factory_LockboxAlreadyDeployed();
 
     _lockbox = _deployLockbox(_xerc20, _baseToken, _isNative);
@@ -95,35 +95,23 @@ contract XERC20Factory is IXERC20Factory {
     }
     bytes32 _salt = keccak256(abi.encodePacked(_name, _symbol, msg.sender));
     bytes memory _creation = type(XERC20).creationCode;
-    bytes memory _bytecode = abi.encodePacked(_creation, abi.encode(_name, _symbol, address(this)));
+    bytes memory _bytecode = abi.encodePacked(_creation, abi.encode(_name, _symbol, address(this))); // factory is initial owner
 
-    console.log("_creation.length =", _creation.length);
-    console.log("_bytecode.length =", _bytecode.length);
-    
-    console.log("msg.sender =", msg.sender);
-    console.log("factory : address(this)", address(this));
-    console.log("CREATE3 address =", address(CREATE3));
-    console.log("_salt =");
-    console.logBytes32(_salt);
- 
-    console.log("before : _xerc20 = CREATE3.deploy(_salt, _bytecode, 0);");
-
-    _xerc20 = CREATE3.deploy(_salt, _bytecode, 0); // TODO <<<<< HERS IS A PROBLEM <<<<<<<<<<<<<<<<<< ????
-
-    console.log("DEPLOYED");
+    _xerc20 = CREATE3.deploy(_salt, _bytecode, 0);
 
     EnumerableSet.add(_xerc20RegistryArray, _xerc20);
 
     for (uint256 _i; _i < _bridgesLength; ++_i) {
       XERC20(_xerc20).setLimits(_bridges[_i], _minterLimits[_i], _burnerLimits[_i]);
     }
-    XERC20(_xerc20).renounceRole(XERC20(_xerc20).SET_LIMITS_ROLE(), address(this));
-
-    // XERC20(_xerc20).grantRole(PAUSER_ROLE, msg.sender);
-    // XERC20(_xerc20).grantRole(UNPAUSER_ROLE, msg.sender);
 
     // XERC20(_xerc20).transferOwnership(msg.sender);
     XERC20(_xerc20).grantRole(XERC20(_xerc20).SET_LIMITS_ROLE(), msg.sender);
+    XERC20(_xerc20).grantRole(XERC20(_xerc20).DEFAULT_ADMIN_ROLE(), msg.sender);
+    // XERC20(_xerc20).grantRole(PAUSER_ROLE, msg.sender);
+    // XERC20(_xerc20).grantRole(UNPAUSER_ROLE, msg.sender);
+    XERC20(_xerc20).renounceRole(XERC20(_xerc20).SET_LIMITS_ROLE(), address(this));
+    XERC20(_xerc20).renounceRole(XERC20(_xerc20).DEFAULT_ADMIN_ROLE(), address(this));
   }
 
   function _deployLockbox(
