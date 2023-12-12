@@ -8,6 +8,11 @@ import {AccessControl} from '@openzeppelin/contracts/access/AccessControl.sol';
 
 contract XERC20 is ERC20, AccessControl, IXERC20, ERC20Permit {
   /**
+   * @notice hard cap of supply of tokens
+   */
+  uint256 private hardCap = type(uint256).max;
+
+  /**
    * @notice The duration it takes for the limits to fully replenish
    */
   uint256 private constant _DURATION = 1 days;
@@ -44,6 +49,19 @@ contract XERC20 is ERC20, AccessControl, IXERC20, ERC20Permit {
     _grantRole(SET_LIMITS_ROLE, _factory); // _transferOwnership(_factory);
     _grantRole(DEFAULT_ADMIN_ROLE, _factory); // _transferOwnership(_factory);
     FACTORY = _factory;
+  }
+
+  function setCap(uint256 _cap) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    if (_cap == 0) revert ERC20InvalidCap(0);
+    if (hardCap != type(uint256).max) revert ERC20CapAlreadySet();
+    hardCap = _cap;
+  }
+
+  /**
+   * @dev Returns the cap on the token's total supply.
+   */
+  function cap() public view virtual returns (uint256) {
+    return hardCap;
   }
 
   /**
@@ -293,6 +311,12 @@ contract XERC20 is ERC20, AccessControl, IXERC20, ERC20Permit {
       uint256 _currentLimit = mintingCurrentLimitOf(_caller);
       if (_currentLimit < _amount) revert IXERC20_NotHighEnoughLimits();
       _useMinterLimits(_caller, _amount);
+    }
+
+    uint256 maxSupply = cap();
+    uint256 newSupply = totalSupply() + _amount;
+    if (newSupply > maxSupply) {
+      revert ERC20ExceededCap(newSupply, maxSupply);
     }
     _mint(_user, _amount);
   }
