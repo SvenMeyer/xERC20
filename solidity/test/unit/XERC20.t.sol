@@ -9,8 +9,14 @@ abstract contract Base is Test {
   address internal _owner = vm.addr(1);
   address internal _user = vm.addr(2);
   address internal _minter = vm.addr(3);
+  address internal _pauser = vm.addr(4);
+  address internal _unpauser = vm.addr(5);
 
   XERC20 internal _xerc20;
+
+  bytes32 public constant SET_LIMITS_ROLE = keccak256('SET_LIMITS_ROLE');
+  bytes32 public constant PAUSER_ROLE = keccak256('PAUSER_ROLE');
+  bytes32 public constant UNPAUSER_ROLE = keccak256('UNPAUSER_ROLE');
 
   event BridgeLimitsSet(uint256 _mintingLimit, uint256 _burningLimit, address indexed _bridge);
   event LockboxSet(address _lockbox);
@@ -152,6 +158,58 @@ contract UnitMintBurn is Base {
     vm.stopPrank();
 
     assertEq(_xerc20.allowance(_user, _minter), _approvalAmount - _amount);
+  }
+}
+
+contract UnitPausable is Base {
+  function testCanNotPauseIfNotPauserRole() public {
+    vm.prank(_pauser);
+    vm.expectRevert(); // (abi.encodeWithSelector(IAccessControl.AccessControlUnauthorizedAccount.selector, _pauser, PAUSER_ROLE));
+    _xerc20.pause();
+  }
+
+  function testCanNotUnpauseIfNotUnpauserRole() public {
+    vm.prank(_owner);
+    _xerc20.grantRole(PAUSER_ROLE, _pauser);
+    vm.prank(_pauser);
+    _xerc20.pause();
+    vm.prank(_pauser);
+    vm.expectRevert();
+    _xerc20.unpause();
+  }
+
+  function testCanUnpauseIfUnpauserRole() public {
+    vm.prank(_owner);
+    _xerc20.grantRole(PAUSER_ROLE, _pauser);
+    vm.prank(_owner);
+    _xerc20.grantRole(UNPAUSER_ROLE, _unpauser);
+    vm.prank(_pauser);
+    _xerc20.pause();
+    assertTrue(_xerc20.paused());
+    vm.prank(_unpauser);
+    _xerc20.unpause();
+    assertFalse(_xerc20.paused());
+  }
+
+  function testCanNotTransferTokenIfPaused(uint256 _amount) public {
+    // mint some tokens : copy of function testMint(uint256 _amount) public {
+    vm.assume(_amount > 0);
+    vm.prank(_owner);
+    _xerc20.setLimits(_user, _amount, 0);
+    vm.prank(_user);
+    _xerc20.mint(_minter, _amount);
+    assertEq(_xerc20.balanceOf(_minter), _amount);
+
+    // pause token contract
+    vm.prank(_owner);
+    _xerc20.grantRole(PAUSER_ROLE, _pauser);
+    vm.prank(_pauser);
+    _xerc20.pause();
+
+    // expect transfer to fail
+    vm.prank(_minter);
+    vm.expectRevert(); // (abi.encodeWithSelector(IAccessControl.AccessControlUnauthorizedAccount.selector, _pauser, PAUSER_ROLE));
+    _xerc20.transfer(_user, _amount);
   }
 }
 

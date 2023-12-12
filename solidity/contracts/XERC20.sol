@@ -5,8 +5,9 @@ import {IXERC20} from '../interfaces/IXERC20.sol';
 import {ERC20} from '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import {ERC20Permit} from '@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol';
 import {AccessControl} from '@openzeppelin/contracts/access/AccessControl.sol';
+import {ERC20Pausable} from '@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol';
 
-contract XERC20 is ERC20, AccessControl, IXERC20, ERC20Permit {
+contract XERC20 is ERC20, IXERC20, ERC20Pausable, AccessControl, ERC20Permit {
   /**
    * @notice hard cap of supply of tokens
    */
@@ -17,7 +18,6 @@ contract XERC20 is ERC20, AccessControl, IXERC20, ERC20Permit {
    */
   uint256 private constant _DURATION = 1 days;
 
-  // bytes32 public constant DEFAULT_ADMIN_ROLE = 0x00; // TODO : get this from @openzeppelin/contracts/access/AccessControl.sol
   bytes32 public constant SET_LIMITS_ROLE = keccak256('SET_LIMITS_ROLE');
   bytes32 public constant PAUSER_ROLE = keccak256('PAUSER_ROLE');
   bytes32 public constant UNPAUSER_ROLE = keccak256('UNPAUSER_ROLE');
@@ -49,6 +49,14 @@ contract XERC20 is ERC20, AccessControl, IXERC20, ERC20Permit {
     _grantRole(SET_LIMITS_ROLE, _factory); // _transferOwnership(_factory);
     _grantRole(DEFAULT_ADMIN_ROLE, _factory); // _transferOwnership(_factory);
     FACTORY = _factory;
+  }
+
+  function pause() public onlyRole(PAUSER_ROLE) {
+    _pause();
+  }
+
+  function unpause() public onlyRole(UNPAUSER_ROLE) {
+    _unpause();
   }
 
   function setCap(uint256 _cap) external onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -319,5 +327,9 @@ contract XERC20 is ERC20, AccessControl, IXERC20, ERC20Permit {
       revert ERC20ExceededCap(newSupply, maxSupply);
     }
     _mint(_user, _amount);
+  }
+
+  function _beforeTokenTransfer(address from, address to, uint256 amount) internal override(ERC20, ERC20Pausable) {
+    ERC20Pausable._beforeTokenTransfer(from, to, amount);
   }
 }
