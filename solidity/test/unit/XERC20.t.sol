@@ -6,6 +6,10 @@ import {XERC20} from '../../contracts/XERC20.sol';
 import {IXERC20} from '../../interfaces/IXERC20.sol';
 
 abstract contract Base is Test {
+  bytes32 public constant SET_LIMITS_ROLE = keccak256('SET_LIMITS_ROLE');
+  bytes32 public constant PAUSER_ROLE = keccak256('PAUSER_ROLE');
+  bytes32 public constant UNPAUSER_ROLE = keccak256('UNPAUSER_ROLE');
+
   address internal _owner = vm.addr(1);
   address internal _user = vm.addr(2);
   address internal _minter = vm.addr(3);
@@ -13,10 +17,6 @@ abstract contract Base is Test {
   address internal _unpauser = vm.addr(5);
 
   XERC20 internal _xerc20;
-
-  bytes32 public constant SET_LIMITS_ROLE = keccak256('SET_LIMITS_ROLE');
-  bytes32 public constant PAUSER_ROLE = keccak256('PAUSER_ROLE');
-  bytes32 public constant UNPAUSER_ROLE = keccak256('UNPAUSER_ROLE');
 
   event BridgeLimitsSet(uint256 _mintingLimit, uint256 _burningLimit, address indexed _bridge);
   event LockboxSet(address _lockbox);

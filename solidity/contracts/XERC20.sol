@@ -9,11 +9,6 @@ import {ERC20Pausable} from '@openzeppelin/contracts/token/ERC20/extensions/ERC2
 
 contract XERC20 is ERC20, IXERC20, ERC20Pausable, AccessControl, ERC20Permit {
   /**
-   * @notice hard cap of supply of tokens
-   */
-  uint256 private hardCap = type(uint256).max;
-
-  /**
    * @notice The duration it takes for the limits to fully replenish
    */
   uint256 private constant _DURATION = 1 days;
@@ -26,6 +21,11 @@ contract XERC20 is ERC20, IXERC20, ERC20Pausable, AccessControl, ERC20Permit {
    * @notice The address of the factory which deployed this contract
    */
   address public immutable FACTORY;
+
+  /**
+   * @notice hard cap of supply of tokens
+   */
+  uint256 private hardCap = type(uint256).max;
 
   /**
    * @notice The address of the lockbox contract
@@ -329,7 +329,7 @@ contract XERC20 is ERC20, IXERC20, ERC20Pausable, AccessControl, ERC20Permit {
     _mint(_user, _amount);
   }
 
-  function _beforeTokenTransfer(address from, address to, uint256 amount) internal override(ERC20, ERC20Pausable) {
-    ERC20Pausable._beforeTokenTransfer(from, to, amount);
+  function _beforeTokenTransfer(address _from, address _to, uint256 _amount) internal override(ERC20, ERC20Pausable) {
+    ERC20Pausable._beforeTokenTransfer(_from, _to, _amount);
   }
 }
