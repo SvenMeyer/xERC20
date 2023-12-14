@@ -236,9 +236,11 @@ contract UnitCreateParams is Base {
     assertEq(_xerc20.burningMaxLimitOf(_randomAddr), _amount);
   }
 
-  function testRevertsWithWrongCaller() public {
-    vm.expectRevert(); // ('Ownable: caller is not the owner');
-    _xerc20.setLimits(_minter, 1e18, 0);
+  function testSetLimitsRevertsWithWrongCaller(address _caller) public {
+    vm.assume(_caller != _owner);
+    vm.startPrank(_caller);
+    vm.expectRevert(_encodeRoleError(_caller, SET_LIMITS_ROLE));
+    _xerc20.setLimits(_caller, 1e18, 0);
   }
 
   function testAddingMintersAndLimits(
