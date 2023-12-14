@@ -4,6 +4,7 @@ pragma solidity >=0.8.4 <0.9.0;
 import {Test} from 'forge-std/Test.sol';
 import {XERC20} from '../../contracts/XERC20.sol';
 import {IXERC20} from '../../interfaces/IXERC20.sol';
+import {Strings} from '@openzeppelin/contracts/utils/Strings.sol';
 
 abstract contract Base is Test {
   bytes32 public constant SET_LIMITS_ROLE = keccak256('SET_LIMITS_ROLE');
@@ -27,6 +28,18 @@ abstract contract Base is Test {
     _xerc20 = new XERC20('Test', 'TST', _owner);
     vm.stopPrank();
   }
+
+  function _encodeRoleError(address caller, bytes32 role) internal pure returns (bytes memory) {
+    return bytes(
+      abi.encodePacked(
+        'AccessControl: account ',
+        Strings.toHexString(uint160(caller), 20),
+        ' is missing role ',
+        Strings.toHexString(uint256(role), 32)
+      )
+    );
+  }
+  // (abi.encodeWithSelector(IAccessControl.AccessControlUnauthorizedAccount.selector, _pauser, PAUSER_ROLE)); // OZ v5 version
 }
 
 contract UnitNames is Base {
@@ -164,7 +177,7 @@ contract UnitMintBurn is Base {
 contract UnitPausable is Base {
   function testCanNotPauseIfNotPauserRole() public {
     vm.prank(_pauser);
-    vm.expectRevert(); // (abi.encodeWithSelector(IAccessControl.AccessControlUnauthorizedAccount.selector, _pauser, PAUSER_ROLE));
+    vm.expectRevert(_encodeRoleError(_pauser, PAUSER_ROLE));
     _xerc20.pause();
   }
 
@@ -174,7 +187,7 @@ contract UnitPausable is Base {
     vm.prank(_pauser);
     _xerc20.pause();
     vm.prank(_pauser);
-    vm.expectRevert();
+    vm.expectRevert(_encodeRoleError(_pauser, UNPAUSER_ROLE));
     _xerc20.unpause();
   }
 
@@ -208,7 +221,7 @@ contract UnitPausable is Base {
 
     // expect transfer to fail
     vm.prank(_minter);
-    vm.expectRevert(); // (abi.encodeWithSelector(IAccessControl.AccessControlUnauthorizedAccount.selector, _pauser, PAUSER_ROLE));
+    vm.expectRevert('ERC20Pausable: token transfer while paused');
     _xerc20.transfer(_user, _amount);
   }
 }
