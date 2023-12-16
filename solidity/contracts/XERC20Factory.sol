@@ -38,11 +38,12 @@ contract XERC20Factory is IXERC20Factory {
   function deployXERC20(
     string memory _name,
     string memory _symbol,
+    uint256 _cap,
     uint256[] memory _minterLimits,
     uint256[] memory _burnerLimits,
     address[] memory _bridges
   ) external returns (address _xerc20) {
-    _xerc20 = _deployXERC20(_name, _symbol, _minterLimits, _burnerLimits, _bridges);
+    _xerc20 = _deployXERC20(_name, _symbol, _cap, _minterLimits, _burnerLimits, _bridges);
 
     emit XERC20Deployed(_xerc20);
   }
@@ -85,6 +86,7 @@ contract XERC20Factory is IXERC20Factory {
   function _deployXERC20(
     string memory _name,
     string memory _symbol,
+    uint256 _cap,
     uint256[] memory _minterLimits,
     uint256[] memory _burnerLimits,
     address[] memory _bridges
@@ -95,7 +97,7 @@ contract XERC20Factory is IXERC20Factory {
     }
     bytes32 _salt = keccak256(abi.encodePacked(_name, _symbol, msg.sender));
     bytes memory _creation = type(XERC20).creationCode;
-    bytes memory _bytecode = abi.encodePacked(_creation, abi.encode(_name, _symbol, address(this))); // factory is initial owner
+    bytes memory _bytecode = abi.encodePacked(_creation, abi.encode(_name, _symbol, _cap, address(this))); // factory is initial owner
 
     _xerc20 = CREATE3.deploy(_salt, _bytecode, 0);
 

@@ -6,8 +6,9 @@ import {ERC20} from '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import {ERC20Permit} from '@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol';
 import {AccessControl} from '@openzeppelin/contracts/access/AccessControl.sol';
 import {ERC20Pausable} from '@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol';
+import {ERC20Capped} from '@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol';
 
-contract XERC20 is ERC20, IXERC20, ERC20Pausable, AccessControl, ERC20Permit {
+contract XERC20 is ERC20, IXERC20, AccessControl, ERC20Permit, ERC20Capped, ERC20Pausable {
   /**
    * @notice The duration it takes for the limits to fully replenish
    */
@@ -21,11 +22,6 @@ contract XERC20 is ERC20, IXERC20, ERC20Pausable, AccessControl, ERC20Permit {
    * @notice The address of the factory which deployed this contract
    */
   address public immutable FACTORY;
-
-  /**
-   * @notice hard cap of supply of tokens
-   */
-  uint256 private hardCap = type(uint256).max;
 
   /**
    * @notice The address of the lockbox contract
@@ -45,7 +41,8 @@ contract XERC20 is ERC20, IXERC20, ERC20Pausable, AccessControl, ERC20Permit {
    * @param _factory The factory which deployed this contract, is the owner during setup
    */
 
-  constructor(string memory _name, string memory _symbol, address _factory) ERC20(_name, _symbol) ERC20Permit(_name) {
+  constructor(string memory _name, string memory _symbol, uint256 _hardCap, address _factory) 
+    ERC20(_name, _symbol) ERC20Capped(_hardCap) ERC20Permit(_name) {
     _grantRole(SET_LIMITS_ROLE, _factory); // _transferOwnership(_factory);
     _grantRole(DEFAULT_ADMIN_ROLE, _factory); // _transferOwnership(_factory);
     FACTORY = _factory;
@@ -57,19 +54,6 @@ contract XERC20 is ERC20, IXERC20, ERC20Pausable, AccessControl, ERC20Permit {
 
   function unpause() public onlyRole(UNPAUSER_ROLE) {
     _unpause();
-  }
-
-  function setCap(uint256 _cap) external onlyRole(DEFAULT_ADMIN_ROLE) {
-    if (_cap == 0) revert ERC20InvalidCap(0);
-    if (hardCap != type(uint256).max) revert ERC20CapAlreadySet();
-    hardCap = _cap;
-  }
-
-  /**
-   * @dev Returns the cap on the token's total supply.
-   */
-  function cap() public view virtual returns (uint256) {
-    return hardCap;
   }
 
   /**
@@ -321,15 +305,15 @@ contract XERC20 is ERC20, IXERC20, ERC20Pausable, AccessControl, ERC20Permit {
       _useMinterLimits(_caller, _amount);
     }
 
-    uint256 maxSupply = cap();
-    uint256 newSupply = totalSupply() + _amount;
-    if (newSupply > maxSupply) {
-      revert ERC20ExceededCap(newSupply, maxSupply);
-    }
     _mint(_user, _amount);
+  }
+
+  function _mint(address account, uint256 amount) internal override(ERC20, ERC20Capped) {
+    ERC20Capped._mint(account, amount);
   }
 
   function _beforeTokenTransfer(address _from, address _to, uint256 _amount) internal override(ERC20, ERC20Pausable) {
     ERC20Pausable._beforeTokenTransfer(_from, _to, _amount);
   }
+
 }

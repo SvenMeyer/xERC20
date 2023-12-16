@@ -29,8 +29,9 @@ contract MultichainCreateXERC20 is Script, ScriptingLibrary {
     uint256[][] memory burnLimits = new uint256[][](chains.length);
 
     // Below are all the variables you need to change when deploying your XERC20 token
-    string memory name = 'Test Token';
-    string memory symbol = 'TST';
+    string memory NAME = 'Test Token';
+    string memory SYMBOL = 'TST';
+    uint256 CAP = 100_000_000e18;
 
     for (uint256 i; i < chains.length; i++) {
       bridges[i] = new address[](0);
@@ -42,6 +43,11 @@ contract MultichainCreateXERC20 is Script, ScriptingLibrary {
       // minteerLimits[i][0] = 1e18;
       // bridges[i][0] = msg.sender;
 
+      // trying to avoid : Stack too deep. Compile with `--via-ir`
+      address[] memory bridgesForChain = bridges[i];
+      uint256[] memory minterLimitsForChain = minterLimits[i];
+      uint256[] memory burnLimitsForChain = burnLimits[i];
+      
       vm.createSelectFork(vm.rpcUrl(vm.envString(chains[i])));
       address _erc20 = i < erc20.length ? erc20[i] : address(0);
       bool _isNative = i < isNative.length ? isNative[i] : false;
@@ -51,7 +57,7 @@ contract MultichainCreateXERC20 is Script, ScriptingLibrary {
         keccak256(address(factory).code) != keccak256(address(0).code), 'There is no factory deployed on this chain'
       );
 
-      address xerc20 = factory.deployXERC20(name, symbol, minterLimits[i], burnLimits[i], bridges[i]);
+      address xerc20 = factory.deployXERC20(NAME, SYMBOL, CAP, minterLimitsForChain, burnLimitsForChain, bridgesForChain);
       address lockbox;
       if (_erc20 != address(0) && !_isNative) {
         lockbox = factory.deployLockbox(xerc20, _erc20, _isNative);

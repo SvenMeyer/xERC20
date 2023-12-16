@@ -4,9 +4,11 @@ pragma solidity >=0.8.4 <0.9.0;
 import {CommonE2EBase} from './Common.sol';
 import {XERC20Lockbox} from '../../contracts/XERC20Lockbox.sol';
 
+uint256 constant CAP = 100_000_000e18;
+bytes32 constant DEFAULT_ADMIN_ROLE = 0x00;
+bytes32 constant SET_LIMITS_ROLE = keccak256('SET_LIMITS_ROLE');
+
 contract E2EDeployment is CommonE2EBase {
-  bytes32 public constant DEFAULT_ADMIN_ROLE = 0x00; // TODO : get this from @openzeppelin/contracts/access/AccessControl.sol
-  bytes32 public constant SET_LIMITS_ROLE = keccak256('SET_LIMITS_ROLE');
 
   function testDeploy() public {
     // assertEq(address(_xerc20.owner()), _owner);
@@ -26,7 +28,7 @@ contract E2EDeployment is CommonE2EBase {
     uint256[] memory _limits = new uint256[](0);
     address[] memory _minters = new address[](0);
 
-    address _token = _xerc20Factory.deployXERC20('Test', 'TST', _limits, _limits, _minters);
+    address _token = _xerc20Factory.deployXERC20('Test', 'TST', CAP, _limits, _limits, _minters);
     address _lock = _xerc20Factory.deployLockbox(_token, address(_dai), false);
 
     assertEq(address(XERC20Lockbox(payable(_lock)).XERC20()), address(_token));

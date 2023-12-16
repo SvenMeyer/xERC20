@@ -25,16 +25,6 @@ interface IXERC20 {
   error ERC20ExceededCap(uint256 increasedSupply, uint256 cap);
 
   /**
-   * @dev The supplied cap is not a valid cap or has been set already
-   */
-  error ERC20InvalidCap(uint256 cap);
-
-  /**
-   * @dev The cap can only be set once and not modofied thereafter
-   */
-  error ERC20CapAlreadySet();
-
-  /**
    * @notice Reverts when a user with too low of a limit tries to call mint/burn
    */
 
@@ -57,11 +47,6 @@ interface IXERC20 {
     uint256 maxLimit;
     uint256 currentLimit;
   }
-
-  /**
-   * return the hard cap (supply limit) of a capped token
-   */
-  function cap() external view returns (uint256 hardCap);
 
   /**
    * @notice Sets the lockbox address

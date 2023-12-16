@@ -5,8 +5,9 @@ import {IERC20} from 'isolmate/interfaces/tokens/IERC20.sol';
 import {Test} from 'forge-std/Test.sol';
 import {XERC20} from '../../contracts/XERC20.sol';
 import {XERC20Lockbox} from '../../contracts/XERC20Lockbox.sol';
-
 import {XERC20Factory} from '../../contracts/XERC20Factory.sol';
+
+uint256 constant CAP = 100_000_000e18;
 
 contract CommonE2EBase is Test {
   uint256 internal constant _FORK_BLOCK = 18_213_198;
@@ -33,7 +34,7 @@ contract CommonE2EBase is Test {
 
     vm.startPrank(_owner);
     _xerc20Factory = new XERC20Factory();
-    address _token = _xerc20Factory.deployXERC20(_dai.name(), _dai.symbol(), _minterLimits, _burnerLimits, _bridges);
+    address _token = _xerc20Factory.deployXERC20(_dai.name(), _dai.symbol(), CAP, _minterLimits, _burnerLimits, _bridges);
     address payable _lock = _xerc20Factory.deployLockbox(_token, address(_dai), false);
 
     _xerc20 = XERC20(_token);

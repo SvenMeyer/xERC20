@@ -42,6 +42,7 @@ interface IXERC20Factory {
    * @dev _limits and _minters must be the same length
    * @param _name The name of the token
    * @param _symbol The symbol of the token
+   * @param _cap hard cap of the supply of tokens
    * @param _burnerLimits The array of limits that you are adding (optional, can be an empty array)
    * @param _bridges The array of burners that you are adding (optional, can be an empty array)
    */
@@ -49,6 +50,7 @@ interface IXERC20Factory {
   function deployXERC20(
     string memory _name,
     string memory _symbol,
+    uint256 _cap,
     uint256[] memory _minterLimits,
     uint256[] memory _burnerLimits,
     address[] memory _bridges
